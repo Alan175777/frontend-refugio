@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base { body { font-family: Montserrat, Arial, sans-serif; } }
+@layer components {
+  .nav-link { @apply text-sm font-medium text-white/90 transition hover:text-gold-300; }
+  .button-primary { @apply inline-flex items-center justify-center rounded-full bg-gold-400 px-6 py-3 text-sm font-bold text-green-950 transition hover:bg-gold-500 disabled:cursor-not-allowed disabled:opacity-60; }
+  .button-secondary { @apply inline-flex items-center justify-center rounded-full border border-green-800 px-6 py-3 text-sm font-bold text-green-800 transition hover:bg-green-800 hover:text-white; }
+  .field { @apply flex flex-col gap-2 text-sm font-semibold text-green-950; }
+  .field input, .field select { @apply rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none transition focus:border-green-800 focus:ring-2 focus:ring-green-800/10; }
+}

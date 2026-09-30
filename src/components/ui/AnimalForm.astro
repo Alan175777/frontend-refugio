@@ -1,0 +1,38 @@
+---
+import Alert from './Alert.astro';
+interface Props { mode?: 'create' | 'edit'; animal?: Record<string, unknown> }
+const { mode = 'create', animal = {} } = Astro.props;
+const isEdit = mode === 'edit';
+---
+<form id="animal-form" data-mode={mode} data-id={animal.identificador ?? ''} class="space-y-5 rounded-3xl bg-white p-6 shadow-card md:p-8">
+  <div class="grid gap-5 md:grid-cols-2">
+    <label class="field">Nombre<input name="nombre" value={animal.nombre ?? ''} placeholder="Ej. Max" /></label>
+    <label class="field">Raza<input name="raza" value={animal.raza ?? ''} placeholder="Ej. Labrador" /></label>
+    <label class="field">Edad<input name="edad" type="number" min="0" value={animal.edad ?? ''} placeholder="0" /></label>
+    <label class="field">Sexo<select name="sexo"><option value="">Selecciona</option><option selected={animal.sexo === 'Hembra'}>Hembra</option><option selected={animal.sexo === 'Macho'}>Macho</option></select></label>
+    <label class="field md:col-span-2">Tipo de animal<select name="tipoAnimal"><option value="">Selecciona</option><option selected={animal.tipoAnimal === 'Perro'}>Perro</option><option selected={animal.tipoAnimal === 'Gato'}>Gato</option></select></label>
+  </div>
+  <Alert />
+  <div class="flex flex-wrap gap-3 pt-2"><button class="button-primary" type="submit">{isEdit ? 'Guardar cambios' : 'Registrar animal'}</button><a class="button-secondary" href="/dashboard">Cancelar</a></div>
+</form>
+<script>
+  import { animalSchema } from '../../schemas/animal.schema';
+  import { apiRequest, ApiError } from '../../lib/api';
+  const form = document.querySelector<HTMLFormElement>('#animal-form');
+  const message = document.querySelector<HTMLElement>('#form-message');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const parsed = animalSchema.safeParse(Object.fromEntries(formData));
+    if (!parsed.success) { show(parsed.error.issues[0]?.message ?? 'Revisa los datos', true); return; }
+    const mode = form.dataset.mode;
+    const id = form.dataset.id;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (button) { button.disabled = true; button.textContent = 'Guardando...'; }
+    try {
+      await apiRequest(mode === 'edit' ? `/animals/${id}` : '/animals', { method: mode === 'edit' ? 'PUT' : 'POST', body: JSON.stringify(parsed.data) });
+      window.location.href = '/dashboard';
+    } catch (error) { show(error instanceof ApiError ? error.message : 'No se pudo guardar el animal', true); if (button) { button.disabled = false; button.textContent = mode === 'edit' ? 'Guardar cambios' : 'Registrar animal'; } }
+  });
+  function show(text: string, error = false) { if (!message) return; message.textContent = text; message.className = `rounded-xl px-4 py-3 text-sm ${error ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`; }
+</script>

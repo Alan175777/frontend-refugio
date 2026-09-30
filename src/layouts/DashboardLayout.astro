@@ -1,0 +1,17 @@
+---
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+const { title = 'Panel | Refugio' } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <Header private />
+    <main class="mx-auto min-h-[calc(100vh-80px)] max-w-7xl px-5 py-8 lg:px-8"><slot /></main>
+  </body>
+</html>

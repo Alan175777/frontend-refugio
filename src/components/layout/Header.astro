@@ -1,0 +1,38 @@
+---
+interface Props { private?: boolean }
+const { private: isPrivate = false } = Astro.props;
+---
+<header class="relative z-20 bg-green-800 text-white shadow-lg">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+    <a href={isPrivate ? '/dashboard' : '/'} class="flex items-center gap-3">
+      <span class="grid h-10 w-10 place-items-center rounded-full bg-gold-400 text-xl text-green-950">✦</span>
+      <span class="font-display text-2xl leading-none">Refugio</span>
+    </a>
+    <button id="menu-button" class="rounded-lg p-2 md:hidden" aria-label="Abrir menú">☰</button>
+    <nav id="main-nav" class="absolute left-0 top-full hidden w-full flex-col gap-3 bg-green-800 px-5 py-5 md:static md:flex md:w-auto md:flex-row md:items-center md:bg-transparent md:px-0 md:py-0">
+      {isPrivate ? (
+        <>
+          <a class="nav-link" href="/dashboard">Panel</a>
+          <a class="nav-link" href="/animals/new">Registrar animal</a>
+          <button id="logout-button" class="rounded-full bg-gold-400 px-5 py-2 text-sm font-bold text-green-950 transition hover:bg-gold-500">Cerrar sesión</button>
+        </>
+      ) : (
+        <>
+          <a class="nav-link" href="/#ayudar">Cómo ayudar</a>
+          <a class="nav-link" href="/#contacto">Contacto</a>
+          <a href="/login" class="rounded-full bg-gold-400 px-5 py-2 text-sm font-bold text-green-950 transition hover:bg-gold-500">Acceder</a>
+        </>
+      )}
+    </nav>
+  </div>
+</header>
+<script>
+  const button = document.querySelector('#menu-button');
+  const nav = document.querySelector('#main-nav');
+  button?.addEventListener('click', () => nav?.classList.toggle('hidden'));
+  document.querySelector('#logout-button')?.addEventListener('click', async () => {
+    const { apiRequest } = await import('../../lib/api');
+    const { clearToken } = await import('../../lib/storage');
+    try { await apiRequest('/auth/logout', { method: 'POST' }); } finally { clearToken(); window.location.href = '/login'; }
+  });
+</script>

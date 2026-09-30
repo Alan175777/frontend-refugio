@@ -1,0 +1,5 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import AnimalForm from '../../components/ui/AnimalForm.astro';
+---
+<DashboardLayout title="Registrar animal | Refugio"><div class="mx-auto max-w-2xl"><p class="font-semibold uppercase tracking-[.2em] text-green-800">Nuevo registro</p><h1 class="mt-2 font-display text-5xl text-green-950">Registrar animal</h1><p class="mt-3 mb-8 text-sm text-slate-500">Agrega la información del animal al refugio.</p><AnimalForm /></div><script>import { isAuthenticated } from '../../lib/storage'; if (!isAuthenticated()) window.location.href = '/login';</script></DashboardLayout>
